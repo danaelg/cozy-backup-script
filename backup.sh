@@ -1,49 +1,48 @@
 #!/bin/bash
 #version : 2.4
 
-#Variable contenant le chemin du répertoire de sauvegarde
-FOLDER=/mnt/nfs #A MODIFIER
+FOLDER= #ADD YOUR OWN BACKUP FOLDER
 
-#Lancement de la backup de cozy
+#Starting backup
 cozy_management backup
 
-#montage du dossier de sauvegarde
+#Mounting the backup folder
 mount $FOLDER
 
-#déplacement de l'archive de sauvegarde dans le dossier de sauvegarde
+#moving the backup archive to backup folder
 mv /var/lib/cozy/backups/cozy-$(date +%Y-%m-%d-)* $FOLDER
 
-#Le 25 du mois on supprime toutes les sauvegardes du mois précédent, pour libérer de l'espace sur le dossier de sauvegarde
-if [ $(date +%d) -ge 25 ]; then #si la date du jour est le 25 ou plus tard
-    VAR=$(date +%m) #récupération du mois en cours dans une variable
+#Every 25th day of the month, it remove old backups (of the last month) to free up some storage
+if [ $(date +%d) -ge 25 ]; then #If it is the 25th day or later
+    VAR=$(date +%m) #Get the today's date into a variable
 
         case $VAR in
-                01 ) #Si on est en janvier
-                        VAR=$(date +%Y) #récupèration de l'année en cours pour enlever 1 (puisque si nous somme en janvier, il faut supprimer les sauvegardes de décembre)
+                01 ) #If it is january
+                        VAR=$(date +%Y) #We get the today's year to decrement it by 1 (because if it's january 2017 we want to delete backups from decembre 2016)
                         VAR="$((10#$VAR - 1))-12"
                         rm $FOLDER/cozy-$VAR\-*
                         ;;
 
-                02 | 03 | 04 | 05 | 06 | 07 | 08 | 09 | 10 ) #Si on est dans un mois qui commence par 0 ou qui commencera par 0 lorsqu'on lui enlève 1 (10(octobre) - 1 = 09(septembre))
-                        VAR=$((10#$VAR - 1)) #on enlève 0 devant le mois en cours puis on enlève 1 (pour avoir le chiffre du mois précédent)
-                        VAR=0$VAR #on remet le 0 devant le chiffre
-                        rm $FOLDER/cozy-$(date +%Y-)$VAR\-* #suppréssion de l'archive du mois précédent présente sur le dossier de sauvegarde
+                02 | 03 | 04 | 05 | 06 | 07 | 08 | 09 | 10 ) #Case of the month which begin with a 0. We include october because, if we are on October (10) we want to delete backups from September (09)
+                        VAR=$((10#$VAR - 1)) #removing the 0 of the month to decrement by one
+                        VAR=0$VAR #we put back the 0
+                        rm $FOLDER/cozy-$(date +%Y-)$VAR\-* #Deletion of the backups
                         ;;
 
-                11 | 12 ) #Pour les mois qui reste
-                        VAR=$((10#$VAR - 1)) #on enlève 1 au mois en cours (pas de 0 à supprimer contrairement au cas précédent)
-                        rm $FOLDER/cozy-$(date +%Y-)$VAR\-* #Suppréssion de l'archive du mois précédent
+                11 | 12 ) #The other cases
+                        VAR=$((10#$VAR - 1)) #Decrement the month by one
+                        rm $FOLDER/cozy-$(date +%Y-)$VAR\-* #Deletion of the backups
                         ;;
 
-               * ) #Au cas où le plomb se transforme en or
-                        echo "une erreur est survenue"
+               * ) #In case something goes wrong
+                        echo "ERROR ! The deletion of old cozy backups didn't work"
                         exit 100;
                         ;;
         esac
 fi
 
-#démontage du dossier de sauvegarde
+#unmounting backup folder
 umount $FOLDER
 
-#fin
+#End
 exit 0;
