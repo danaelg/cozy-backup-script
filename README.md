@@ -12,6 +12,7 @@ Finaly it removes backups from the last month as of the 25th day of the month by
 ##How to use it ?
 * You need to have cozy_management installed on your server, if you don't, check the repo : https://github.com/cozy/python_cozy_management
 * Change the `FOLDER` variable in the first line of the script
+* All done, you can now run the script manualy with `sh backup.sh` or you can run the script regularly by adding it to crontab
 
 ##FAQ
 * I don't want to remove old backups, I want to keep EVERY backup how to do it ?
