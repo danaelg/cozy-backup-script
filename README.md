@@ -21,8 +21,7 @@ Finaly it removes backups from the last month as of the 25th day of the month by
 * Why wait to the 25th day of the month to remove backups instead of always remove the oldest backup (for example it's 1st February,
 so you remove the backup of the 1st January)
 
-  >The script was upagraded according to my needs so I start to create a backup archive every day, then I added to moving command
-and finaly a needed to remove old backup, so I created this system which works very well. Maybe one day I will change the
+  >The script was upagraded according to my needs so I start to create a backup archive every day, then I added the moving command and finaly the removing old backup system, this system works very well for me. Maybe one day I will change the
 system, but it's not expected for now
 
 * Cozy team is developping cozy V3, what your script will become ?
